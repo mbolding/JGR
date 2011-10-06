@@ -1,0 +1,171 @@
+getwd()#
+szci <- dget('/Users/schizophrenia/Documents/work/wip/SZVandSZCI/szci/JGR/szci.robj')#
+save.image#
+save.image()#
+szci.sub<-subset(szci,Group == "NV")#
+summary(szci.sub)#
+szci.NV <- szci.sub#
+szci.SZ<-subset(szci,Group == "SZ")#
+save.image#
+save.image()#
+ggplot(szci,aes(CISSmean,fill=Group))+geom_density(alpha=0.2)#
+dev.new()
+ggplot() +
+	geom_density(aes(x = CISSmean,fill = Group),data=szci,alpha = 0.1083) +
+	geom_vline(data=szci.sub,xintercept = 21.0)#
+dev.new()
+ggplot() +
+	geom_boxplot(aes(y = CISSmean,x = objectiveMeas),data=szci.SZ,position = position_dodge(width = 0.9)) +
+	geom_abline(data=szci.sub,intercept = 21.0,slope = 0.0,colour = '#ff261f')#
+dev.new()
+ggplot() +
+	geom_density(aes(x = CISSmean,fill = objectiveMeas),data=szci.SZ,alpha = 0.4833) +
+	geom_vline(data=szci.sub,xintercept = 21.0)#
+dev.new()
+ggplot() +
+	geom_point(aes(x = CISSmean,y = NPCbreakmean,colour = objectiveMeas),data=szci,alpha = 0.5952) +
+	geom_smooth(aes(x = CISSmean,y = NPCbreakmean,colour = objectiveMeas),data=szci,method = 'lm',formula = 'y ~ x') +
+	facet_wrap(facets = ~Group)#
+imosaic(vars = szci.sub[,c("Group","objectiveMeas","CISS")])#
+ggplot() +
+	geom_boxplot(aes(y = CISSmean,x = objectiveMeas,colour = Group),data=szci,position = position_dodge(width = 0.9))#
+dev.new()
+ggplot() +
+	geom_point(aes(x = objectiveMeas,y = CISS,size = ..n..),data=szci.SZ,stat = 'sum') +
+	scale_area()#
+rm(szci.sub#
+rm(szci.sub)#
+tables<-contingency.tables(
+	row.vars=d(CISS),
+	col.vars=d(objectiveMeas),
+	stratum.var=Group,data=szci)
+tables<-add.chi.squared(tables)
+print(tables,prop.r=T,prop.c=T,prop.t=F)
+remove(tables)#
+model.lm <- lm(formula=CISSmean ~ RBANStotal,data=szci.SZ,na.action=na.omit)
+Anova(model.lm,type='II')
+summary(model.lm)
+dev.new()
+plot(effect(term="RBANStotal",mod=model.lm,default.levels=20),rescale.axis=FALSE)
+rm('model.lm')#
+frequencies(szci[c("RBANStotal")] , r.digits = 1)#
+frequencies(szci[c("RBANStotal","Group")] , r.digits = 1)#
+tables<-contingency.tables(
+	row.vars=d(RBANStotal),
+	col.vars=d(Group),data=szci)
+tables<-add.chi.squared(tables)
+print(tables,prop.r=T,prop.c=T,prop.t=F)
+remove(tables)#
+descriptive.table(vars = d(RBANStotal,RBANSIM,RBANSVS,RBANSLANG,RBANSATT,RBANSDM) ,
+	strata = d(Group),data= szci,
+	func.names =c("Mean","St. Deviation","Valid N","Minimum","Maximum"))#
+model.lm <- lm(formula=CISSmean ~ RBANSIM + RBANSVS + RBANSLANG + RBANSATT + RBANSDM + Group,data=szci,na.action=na.omit)
+Anova(model.lm,type='II')
+summary(model.lm,correlation=TRUE)
+rm('model.lm')#
+> dev.new()> ggplot() ++ geom_density(aes(x = CISSmean,fill = objectiveMeas),data=szci.SZ,alpha = 0.4833) ++ geom_vline(data=szci.sub,xintercept = 21.0)#
+dev.new()#
+ggplot() + geom_density(aes(x = CISSmean,fill = objectiveMeas),data=szci.SZ,alpha = 0.4833) + geom_vline(data=szci.sub,xintercept = 21.0)#
+ggplot() + geom_density(aes(x = CISSmean,fill = objectiveMeas),data=szci.SZ,alpha = 0.2) + geom_vline(data=szci.sub,xintercept = 21.0)#
+dev.new()
+ggplot() +
+	geom_point(aes(x = objectiveMeas,y = CISSmean),data=szci.SZ,alpha = 0.2952) +
+	geom_smooth(aes(x = objectiveMeas,y = CISSmean),data=szci.SZ,method = 'lm',formula = 'y ~ x') +
+	geom_abline(data=szci,intercept = 21.0,slope = 0.0,colour = '#fc2421')#
+descriptive.table(d(CISSmean),objectiveMeas,szci.SZ,func.names =c("Mean","St. Deviation","Valid N"))
+print(two.sample.test(formula=d(CISSmean) ~ objectiveMeas,
+		data=szci.SZ,
+		test=t.test,
+		alternative="two.sided")
+)
+#
+descriptive.table(d(CISSmean),objectiveMeas,szci.SZ,func.names =c("Mean","St. Deviation","Valid N"))
+print(two.sample.test(formula=d(CISSmean) ~ objectiveMeas,
+		data=szci.SZ,
+		test=wilcox.test,
+		alternative="two.sided",
+		 correct=FALSE)
+)
+#
+descriptive.table(vars = d(CISSmean) ,
+	strata = d(Group),data= szci,
+	func.names =c("Mean","St. Deviation","Valid N","Minimum","Maximum"))#
+descriptive.table(vars = d(age) ,
+	strata = d(Group),data= szci,
+	func.names =c("Mean","St. Deviation","Valid N","Minimum","Maximum"))#
+descriptive.table(d(BPRSnegative,BPRSpositive,BPRStotal),Group,szci.SZ,func.names =c("Mean","St. Deviation","Valid N"))
+print(two.sample.test(formula=d(BPRSnegative,BPRSpositive,BPRStotal) ~ Group,
+		data=szci.SZ,
+		test=wilcox.test,
+		alternative="two.sided",
+		 correct=FALSE)
+)
+#
+descriptive.table(d(BPRSnegative,BPRSpositive,BPRStotal),Group,szci.SZ,func.names =c("Mean","St. Deviation","Valid N"))
+print(two.sample.test(formula=d(BPRSnegative,BPRSpositive,BPRStotal) ~ Group,
+		data=szci.SZ,
+		test=wilcox.test,
+		alternative="two.sided",
+		 correct=FALSE)
+)
+#
+descriptive.table(d(BPRStotal,BPRSpositive,BPRSnegative),Group,szci,func.names =c("Mean","St. Deviation","Valid N"))
+print(two.sample.test(formula=d(BPRStotal,BPRSpositive,BPRSnegative) ~ Group,
+		data=szci,
+		test=t.test,
+		alternative="two.sided")
+)
+#
+descriptive.table(vars=d(objectiveMeas),data=szci.SZ,func.names =c("Mean","St. Deviation","Valid N"))
+one.sample.test(variables=d(objectiveMeas),
+	data=szci.SZ,
+	test=t.test,
+	alternative="two.sided")
+one.sample.test(variables=d(objectiveMeas),
+	data=szci.SZ,
+	test=shapiro.test)
+onesample.plot(variables=d(objectiveMeas),data=szci.SZ,test.value=0.0,type='box',alpha=0.2)
+#
+dev.new()
+ggplot() +
+	geom_point(aes(x = age,y = NPCbreakmean,colour = Group),data=szci,alpha = 0.2952) +
+	geom_smooth(aes(x = age,y = NPCbreakmean,colour = Group),data=szci,method = 'lm',formula = 'y ~ x',se = FALSE)#
+dev.new()
+ggplot() +
+	geom_boxplot(aes(y = NPCbreakmean,x = Group),data=szci)#
+descriptive.table(d(NPCbreakmean),Group,szci,func.names =c("Mean","St. Deviation","Valid N"))
+print(two.sample.test(formula=d(NPCbreakmean) ~ Group,
+		data=szci,
+		test=t.test,
+		alternative="two.sided")
+)
+print(two.sample.test(formula=d(NPCbreakmean) ~ Group,
+		data=szci,
+		test=wilcox.test,
+		alternative="two.sided",
+		 correct=FALSE)
+)
+#
+dev.new()
+ggplot() +
+	geom_point(aes(x = NPCbreakmean,y = CISSmean),data=szci.SZ,alpha = 0.5952) +
+	geom_smooth(aes(x = NPCbreakmean,y = CISSmean),data=szci.SZ,method = 'rlm')#
+dev.new()
+ggplot() +
+	geom_point(aes(x = NPCbreakmean,y = CISSmean),data=szci.SZ,alpha = 0.5952) +
+	geom_smooth(aes(x = NPCbreakmean,y = CISSmean),data=szci.SZ,method = 'rlm') +
+	geom_vline(data=szci,xintercept = 5.5)#
+dev.new()
+ggplot() +
+	geom_point(aes(x = Sheards,y = CISSmean),data=szci.SZ,alpha = 0.5952) +
+	geom_smooth(aes(x = Sheards,y = CISSmean),data=szci.SZ,method = 'rlm')#
+dev.new()
+ggplot() +
+	geom_point(aes(x = covertestNlessD,y = CISSmean),data=szci.SZ,alpha = 0.5952) +
+	geom_smooth(aes(x = covertestNlessD,y = CISSmean),data=szci.SZ,method = 'lm')#
+dev.new()
+ggplot() +
+	geom_point(aes(x = covertestNlessD,y = CISSmean),data=szci.SZ,alpha = 0.5952) +
+	geom_smooth(aes(x = covertestNlessD,y = CISSmean),data=szci.SZ,method = 'lm') +
+	geom_vline(data=szci,xintercept = -4.0)#
+q()#
